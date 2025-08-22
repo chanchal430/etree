@@ -198,22 +198,24 @@
       const marquee3Row = document.getElementById("marquee3-row");
       const marquee3Template = document.getElementById("marquee3-template");
 
-      // Clone logos multiple times to fill width
+      // === Clone logos multiple times to fill width ===
       const repeatCount = 3;
       for (let i = 0; i < repeatCount; i++) {
         marquee3Row.appendChild(marquee3Template.content.cloneNode(true));
       }
 
-      let speed = 0.5;
       let dragging = false;
-      let paused = false;
       let startX = 0;
       let startScrollLeft = 0;
+      let autoScrollActive = true; // control auto scroll
+      let speed = 1; // adjust for faster/slower scroll
 
-      // Auto-scroll loop
+      // === Auto scroll with infinite loop ===
       function autoScroll() {
-        if (!dragging && !paused) {
+        if (autoScrollActive && !dragging) {
           marquee3Container.scrollLeft += speed;
+
+          // Reset when reaching the end
           if (
             marquee3Container.scrollLeft >=
             marquee3Row.scrollWidth - marquee3Container.clientWidth
@@ -225,19 +227,32 @@
       }
       autoScroll();
 
-      // Mouse drag
+      // === Hover-based edge scroll (desktop only) ===
+      marquee3Container.onmousemove = (e) => {
+        const { left, width } = marquee3Container.getBoundingClientRect();
+        const x = e.clientX - left;
+        const hoverSpeed = 10;
+
+        if (x < 80) marquee3Container.scrollLeft -= hoverSpeed;
+        else if (x > width - 80) marquee3Container.scrollLeft += hoverSpeed;
+      };
+
+      // === Mouse drag ===
       marquee3Container.addEventListener("mousedown", (e) => {
         dragging = true;
+        autoScrollActive = false;
         startX = e.pageX - marquee3Container.offsetLeft;
         startScrollLeft = marquee3Container.scrollLeft;
         marquee3Container.classList.add("grabbing");
       });
       marquee3Container.addEventListener("mouseleave", () => {
         dragging = false;
+        autoScrollActive = true;
         marquee3Container.classList.remove("grabbing");
       });
       marquee3Container.addEventListener("mouseup", () => {
         dragging = false;
+        autoScrollActive = true;
         marquee3Container.classList.remove("grabbing");
       });
       marquee3Container.addEventListener("mousemove", (e) => {
@@ -248,11 +263,12 @@
         marquee3Container.scrollLeft = startScrollLeft - walk;
       });
 
-      // Touch drag (iPhone friendly)
+      // === Touch drag (iPhone friendly) ===
       marquee3Container.addEventListener(
         "touchstart",
         (e) => {
           dragging = true;
+          autoScrollActive = false;
           startX = e.touches[0].pageX - marquee3Container.offsetLeft;
           startScrollLeft = marquee3Container.scrollLeft;
         },
@@ -263,6 +279,7 @@
         "touchend",
         () => {
           dragging = false;
+          autoScrollActive = true;
         },
         { passive: true }
       );
@@ -1117,24 +1134,25 @@
               const marquee2Template =
                 document.getElementById("marquee2-template");
 
-              // Clone content for infinite effect
-              const marquee2RepeatCount = 3;
+              // Clone content for infinite loop
+              const marquee2RepeatCount = 2; // only need 2 for seamless looping
               for (let i = 0; i < marquee2RepeatCount; i++) {
                 marquee2Row.appendChild(
                   marquee2Template.content.cloneNode(true)
                 );
               }
 
-              let marquee2Speed = 0.5;
+              let marquee2Speed = 0.8; // adjust speed here
               let marquee2Dragging = false;
-              let marquee2Paused = false;
 
               function marquee2AutoScroll() {
-                if (!marquee2Dragging && !marquee2Paused) {
+                if (!marquee2Dragging) {
                   marquee2Container.scrollLeft += marquee2Speed;
+
+                  // when halfway through, reset to start for seamless effect
                   if (
                     marquee2Container.scrollLeft >=
-                    marquee2Row.scrollWidth - marquee2Container.clientWidth
+                    marquee2Row.scrollWidth / 2
                   ) {
                     marquee2Container.scrollLeft = 0;
                   }
