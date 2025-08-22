@@ -271,12 +271,11 @@
         "touchmove",
         (e) => {
           if (!dragging) return;
-          e.preventDefault(); // needed for iOS
           const x = e.touches[0].pageX - marquee3Container.offsetLeft;
           const walk = (x - startX) * 1.5;
           marquee3Container.scrollLeft = startScrollLeft - walk;
         },
-        { passive: false }
+        { passive: true }
       );
     </script>
 
@@ -1186,12 +1185,16 @@
                 marquee2Dragging = false;
               });
 
-              marquee2Container.addEventListener("touchmove", (e) => {
-                if (!marquee2Dragging) return;
-                const x = e.touches[0].pageX - marquee2Container.offsetLeft;
-                const walk = (x - marquee2StartX) * 1.5;
-                marquee2Container.scrollLeft = marquee2StartScrollLeft - walk;
-              });
+              marquee2Container.addEventListener(
+                "touchmove",
+                (e) => {
+                  if (!marquee2Dragging) return;
+                  const x = e.touches[0].pageX - marquee2Container.offsetLeft;
+                  const walk = (x - marquee2StartX) * 1.5;
+                  marquee2Container.scrollLeft = marquee2StartScrollLeft - walk;
+                },
+                { passive: true }
+              );
             </script>
 
             <!-- Scrollbar Hide -->
